@@ -1,6 +1,7 @@
 import datetime
 import os
 import json
+import re
 import tweepy
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
@@ -96,7 +97,8 @@ def add_milestone_to_history(channel_id, channel_username, milestone):
 def tweet_milestones(channel_name, channel_username, milestones):
     """Post a tweet about a milestone."""
     milestones_str = ', '.join(f'{m/1000000}M' for m in milestones)
-    channel_name_cleaned = channel_name.replace(" ", "")
+    # channel_name_cleaned = channel_name.replace(" ", "")
+    channel_name_cleaned = re.sub(r'[-_.&\s]', '', channel_name)
     channel_username_cleaned = channel_username.lstrip("@")
 
     if channel_name_cleaned.lower() != channel_username_cleaned.lower():
@@ -105,7 +107,7 @@ def tweet_milestones(channel_name, channel_username, milestones):
         tweet = f"{channel_name} passed {milestones_str} subscribers on YouTube! #{channel_username_cleaned} #YouTube"
 
     # tweet = f"{channel_name} passed {milestones_str} subscribers on YouTube! #{channel_username_cleaned} #{channel_name_cleaned} #YouTube"
-    
+
     response = client.create_tweet(text=tweet)
     print(response)
     print(f"Tweeted milestones for {channel_name}: {milestones_str}")
